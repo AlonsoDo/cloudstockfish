@@ -1,0 +1,9 @@
+C:\Temp\TestFleck\src\Samples\ConsoleApp\bin\Debug\Fleck.Samples.ConsoleApp.exe
+C:\Temp\TestFleck\src\Samples\ConsoleApp\bin\Debug\Fleck.Samples.ConsoleApp.pdb
+C:\Temp\TestFleck\src\Samples\ConsoleApp\bin\Debug\Fleck.dll
+C:\Temp\TestFleck\src\Samples\ConsoleApp\bin\Debug\Fleck.pdb
+C:\Temp\TestFleck\src\Samples\ConsoleApp\obj\x86\Debug\ConsoleApp.csprojResolveAssemblyReference.cache
+C:\Temp\TestFleck\src\Samples\ConsoleApp\obj\x86\Debug\ConsoleApp.csproj.CoreCompileInputs.cache
+C:\Temp\TestFleck\src\Samples\ConsoleApp\obj\x86\Debug\ConsoleApp.csproj.CopyComplete
+C:\Temp\TestFleck\src\Samples\ConsoleApp\obj\x86\Debug\Fleck.Samples.ConsoleApp.exe
+C:\Temp\TestFleck\src\Samples\ConsoleApp\obj\x86\Debug\Fleck.Samples.ConsoleApp.pdb

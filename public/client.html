@@ -1,0 +1,69 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+    <title>websocket client</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#status').text('Conectando al servidor...');
+        
+            var inc = document.getElementById('incomming');
+            var wsImpl = window.WebSocket || window.MozWebSocket;
+            var form = document.getElementById('sendForm');
+            var input = document.getElementById('sendText');
+
+            inc.innerHTML += "connecting to server ..<br/>";
+
+            // create a new websocket and connect
+            window.ws = new wsImpl('ws://localhost:8181/');
+
+            // when data is comming from the server, this metod is called
+            ws.onmessage = function (evt) {
+                inc.innerHTML += evt.data + '<br/>';
+            };
+
+            // when the connection is established, this method is called
+            ws.onopen = function () {
+                //inc.innerHTML += '.. connection open<br/>';
+                $('#status').text('...Conexion abierta')
+                $('#calcular').prop('disabled', false);                
+                //ws.send('Test');
+                var IniRun = { 'FEN':'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -'};
+                IniRun = JSON.stringify(IniRun);
+                ws.send(IniRun);
+            };
+
+            // when the connection is closed, this method is called
+            ws.onclose = function () {
+                inc.innerHTML += '.. connection closed<br/>';
+            }
+
+            /*form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var val = input.value;
+                ws.send(val);
+                input.value = "";
+            });*/
+
+        });
+    </script>
+</head>
+<body>
+    <form id="sendForm">
+        <input id="sendText" placeholder="Text to send" />
+    </form>
+    <pre id="incomming"></pre>
+    <div style="height:140px; width:820px; border:3px solid black;">
+        <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Cadena FEN:</label>
+        <input id="sendedFEN" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -" style="margin-top:10px; margin-left:10px; float:left; width:800px; color:orangered; font-size:16px; font-weight:bold; font-family:'Comic Sans MS';" placeholder="Posicion FEN para enviar" maxlength="100" />
+        <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Profundidad:</label>
+        <input id="depth" value="15" style="margin-top:10px; margin-left:10px; float:left; width:60px; color:orangered; font-size:16px; font-weight:bold; font-family:'Comic Sans MS';" maxlength="99" />
+        <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">MultiPv:</label>
+        <input id="multyPv" value="3" style="margin-top:10px; margin-left:10px; float:left; width:60px; color:orangered; font-size:16px; font-weight:bold; font-family:'Comic Sans MS';" maxlength="10" />
+        <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Status: </label>
+        <label id="status" style="margin-top:10px; margin-left:10px; float:left; color:orangered; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Esperando...</label>
+    </div>
+    <button id="calcular" type="button" disabled style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
+</body>
+</html>
