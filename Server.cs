@@ -14,13 +14,17 @@ namespace Fleck.Samples.ConsoleApp
         public List<string>ListaVariantes = new List<string>();        
         public StringBuilder Output = new StringBuilder();
         public static List<int> IdHilos = new List<int>();
+        //public static allSockets = new List<IWebSocketConnection>();
+        public static IWebSocketConnection webSocket;
+        public static List<Fleck.IWebSocketConnection> allSockets = new List<Fleck.IWebSocketConnection>();
 
         static void Main()
         {
             FleckLog.Level = LogLevel.Debug;
-            var allSockets = new List<IWebSocketConnection>();
+            //var allSockets = new List<IWebSocketConnection>();
             var server = new WebSocketServer("ws://0.0.0.0:8181");
-            //var hilos = new List<Thread>();            
+            //var hilos = new List<Thread>();    
+            
 
         server.Start(socket =>
             {
@@ -35,6 +39,7 @@ namespace Fleck.Samples.ConsoleApp
                         cmh.FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
                         cmh.Depth = "5";
                         cmh.MultiPv = "1";
+                        cmh.webSocket = socket;
 
                         // Creamos un delegado para el método OutListText()                        
                         ThreadStart ts = new ThreadStart(cmh.OutListText);
@@ -98,6 +103,7 @@ namespace Fleck.Samples.ConsoleApp
         public string FEN;
         public string Depth;
         public string MultiPv;
+        public IWebSocketConnection webSocket;
         private Process process = new Process();
 
         public void OutListText()
@@ -140,8 +146,10 @@ namespace Fleck.Samples.ConsoleApp
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             Console.WriteLine(Environment.NewLine + outLine.Data);
+
+            webSocket.Send(outLine.Data);
             
-            
+            //var Socket = 
             //Console.WriteLine(Environment.NewLine + "Proceso parado");
             //process.Close();
 
