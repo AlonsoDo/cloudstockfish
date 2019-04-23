@@ -12,6 +12,8 @@
             var wsImpl = window.WebSocket || window.MozWebSocket;
             var form = document.getElementById('sendForm');
             var input = document.getElementById('sendText');
+            var ContConexiones = 0;
+            var TipoConexion = 'PrimeraConexion';
 
             inc.innerHTML += "connecting to server ..<br/>";
 
@@ -19,8 +21,7 @@
             window.ws = new wsImpl('ws://localhost:8181/');
 
             // when data is comming from the server, this metod is called
-            ws.onmessage = function (evt) {
-                //inc.innerHTML += evt.data + '<br/>';
+            ws.onmessage = function (evt) {               
                 console.log(evt.data);
             };
 
@@ -30,9 +31,13 @@
                 $('#status').text('...Conexion abierta')
                 $('#calcular').prop('disabled', false);                
                 //ws.send('Test');
-                var IniRun = { 'FEN':'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -'};
+                /*var IniRun = {
+                    'FEN': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -',
+                    'Depth': '15',
+                    'MultiPv': '1'
+                };
                 IniRun = JSON.stringify(IniRun);
-                ws.send(IniRun);
+                ws.send(IniRun);*/
             };
 
             // when the connection is closed, this method is called
@@ -46,6 +51,35 @@
                 ws.send(val);
                 input.value = "";
             });*/
+
+            $('#calcular').click(function () {
+                //$('#stop').show();
+                //$('#calcular').hide();                
+                var IniRun = {
+                    'SubEvento':TipoConexion,
+                    'FEN': $('#sendedFEN').val(),
+                    'Depth': $('#depth').val(),
+                    'MultiPv': $('#multyPv').val()
+                };
+                IniRun = JSON.stringify(IniRun);
+                console.log(IniRun)
+                ws.send(IniRun);
+                TipoConexion = 'SiguientesConexiones';
+            })
+
+            $('#stop').click(function () {
+                $('#stop').hide();
+                $('#calcular').show();
+                var IniRun = {
+                    'SubEvento': 'StopCalc',
+                    'FEN': '',
+                    'Depth': '',
+                    'MultiPv': ''
+                };
+                IniRun = JSON.stringify(IniRun);
+                console.log(IniRun)
+                ws.send(IniRun);                
+            })
 
         });
     </script>
@@ -65,6 +99,7 @@
         <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Status: </label>
         <label id="status" style="margin-top:10px; margin-left:10px; float:left; color:orangered; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Esperando...</label>
     </div>
-    <button id="calcular" type="button" disabled style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
+    <button id="calcular" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
+    <button id="stop" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Stop</button>
 </body>
 </html>

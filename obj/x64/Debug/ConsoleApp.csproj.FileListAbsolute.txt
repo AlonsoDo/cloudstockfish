@@ -16,3 +16,6 @@ C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Debug\ConsoleApp.csproj.CoreCo
 C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Debug\ConsoleApp.csproj.CopyComplete
 C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Debug\Fleck.Samples.ConsoleApp.exe
 C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Debug\Fleck.Samples.ConsoleApp.pdb
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Debug\Newtonsoft.Json.dll
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Debug\Newtonsoft.Json.pdb
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Debug\Newtonsoft.Json.xml

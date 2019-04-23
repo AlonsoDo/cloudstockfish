@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Net.Sockets;
+using Newtonsoft.Json;
 
 namespace Fleck.Samples.ConsoleApp
 {
@@ -33,32 +34,7 @@ namespace Fleck.Samples.ConsoleApp
                         Console.WriteLine("Open!");
                         allSockets.Add(socket);
 
-                        // Creamos una instancia de la clase multi hilo y seteamos los campos que normalmente pasariamos como parametros
-                        ClaseMultiHilo cmh = new ClaseMultiHilo();
                         
-                        cmh.FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
-                        cmh.Depth = "5";
-                        cmh.MultiPv = "1";
-                        cmh.webSocket = socket;
-
-                        // Creamos un delegado para el método OutListText()                        
-                        ThreadStart ts = new ThreadStart(cmh.OutListText);
-
-                        // Creamos un hilo para ejecutar el delegado...
-                        Thread t = new Thread(ts);                        
-
-                        // Iniciamos la ejecucion del nuevo hilo
-                        t.Start();
-
-                        IdHilos.Add(t.ManagedThreadId);                        
-
-                        Console.WriteLine("hilo: " + t.ManagedThreadId);                        
-
-                        // Esperamos a que termine la ejecucion del hilo
-                        t.Join();                        
-
-                        Console.WriteLine("Fin de la ejecución. Presione una tecla para salir.");
-                        Console.ReadLine();
 
                     };
                 socket.OnClose = () =>
@@ -73,13 +49,54 @@ namespace Fleck.Samples.ConsoleApp
                     };
                 socket.OnMessage = message =>
                     {
-                        //var IniRun = message;
-
                         Console.WriteLine(message);
                         //allSockets.ToList().ForEach(s => s.Send("Echo: " + message));
 
 
-                        
+
+                        ClaseMultiHilo oMessage = JsonConvert.DeserializeObject<ClaseMultiHilo>(message);
+
+                        //Primera Conexion
+                        if (oMessage.SubEvento == "PrimeraConexion")
+                        {
+                            // Creamos una instancia de la clase multi hilo y seteamos los campos que normalmente pasariamos como parametros
+                            ClaseMultiHilo cmh = new ClaseMultiHilo();
+
+                            cmh.SubEvento = oMessage.SubEvento;
+                            cmh.FEN = oMessage.FEN;
+                            cmh.Depth = oMessage.Depth;
+                            cmh.MultiPv = oMessage.MultiPv;
+
+                            cmh.webSocket = socket;
+
+                            // Creamos un delegado para el método OutListText()                        
+                            ThreadStart ts = new ThreadStart(cmh.OutListText);
+
+                            // Creamos un hilo para ejecutar el delegado...
+                            Thread t = new Thread(ts);
+
+                            // Iniciamos la ejecucion del nuevo hilo
+                            t.Start();
+
+                            IdHilos.Add(t.ManagedThreadId);
+
+                            Console.WriteLine("hilo: " + t.ManagedThreadId);
+
+                            // Esperamos a que termine la ejecucion del hilo
+                            t.Join();
+
+                            Console.WriteLine("Fin de la ejecución. Presione una tecla para salir.");
+                            Console.ReadLine();
+                        }
+                        else if (oMessage.SubEvento == "SiguientesConexiones")
+                        {
+                            Console.WriteLine("Test");
+                        }
+                        else if (oMessage.SubEvento == "StopCalc")
+                        {
+                            Console.WriteLine("Stop");
+                        }
+
 
                     };
             });
@@ -96,10 +113,11 @@ namespace Fleck.Samples.ConsoleApp
 
         }          
 
-    }
+    }    
 
     class ClaseMultiHilo
     {
+        public string SubEvento;
         public string FEN;
         public string Depth;
         public string MultiPv;
@@ -110,7 +128,7 @@ namespace Fleck.Samples.ConsoleApp
         {
             Console.WriteLine("Recibiendo parametros...");
             Thread.Sleep(2000);
-            Console.WriteLine("FEN: " + this.FEN + " Depth: " + this.Depth + " MultiPv: " + this.MultiPv);
+            Console.WriteLine("SubEvento: " + this.SubEvento + " FEN: " + this.FEN + " Depth: " + this.Depth + " MultiPv: " + this.MultiPv);
             
             process.StartInfo.FileName = "stockfish_10_x64_win.exe";
             process.StartInfo.UseShellExecute = false;
@@ -121,13 +139,21 @@ namespace Fleck.Samples.ConsoleApp
 
             process.Start();
 
-            //process.StandardInput.WriteLine("uci");
-            //process.StandardInput.Flush();
+            process.StandardInput.WriteLine("uci");
+            process.StandardInput.Flush();
 
-            //process.StandardInput.WriteLine("isready");
-            //process.StandardInput.Flush();
+            process.StandardInput.WriteLine("isready");
+            process.StandardInput.Flush();
 
-            process.StandardInput.WriteLine("go depth 5"); 
+            process.StandardInput.WriteLine("position fen " + this.FEN);
+            process.StandardInput.Flush();
+
+            process.StandardInput.WriteLine("setoption name multipv value " + this.MultiPv);
+            process.StandardInput.Flush();
+
+            Thread.Sleep(1000);
+
+            process.StandardInput.WriteLine("go depth " + this.Depth); 
             process.StandardInput.Flush();
 
 
@@ -146,6 +172,8 @@ namespace Fleck.Samples.ConsoleApp
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             Console.WriteLine(Environment.NewLine + outLine.Data);
+
+            Thread.Sleep(1000);
 
             webSocket.Send(outLine.Data);
             
