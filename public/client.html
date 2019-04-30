@@ -2,61 +2,44 @@
 <html>
 <head>
     <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
-    <title>websocket client</title>
+    <title>websocket client</title>    
+    <script src="gestvariantes.js"></script>
     <script type="text/javascript">
+
         $(document).ready(function () {
 
-            $('#status').text('Conectando al servidor...');
-        
-            var inc = document.getElementById('incomming');
             var wsImpl = window.WebSocket || window.MozWebSocket;
-            var form = document.getElementById('sendForm');
-            var input = document.getElementById('sendText');
             var ContConexiones = 0;
             var TipoConexion = 'PrimeraConexion';
 
-            inc.innerHTML += "connecting to server ..<br/>";
+            $('#LabelCalculando').hide();
 
             // create a new websocket and connect
             window.ws = new wsImpl('ws://localhost:8181/');
 
             // when data is comming from the server, this metod is called
-            ws.onmessage = function (evt) {               
+            ws.onmessage = function (evt) {
                 console.log(evt.data);
             };
 
             // when the connection is established, this method is called
             ws.onopen = function () {
-                //inc.innerHTML += '.. connection open<br/>';
                 $('#status').text('...Conexion abierta')
-                $('#calcular').prop('disabled', false);                
-                //ws.send('Test');
-                /*var IniRun = {
-                    'FEN': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -',
-                    'Depth': '15',
-                    'MultiPv': '1'
-                };
-                IniRun = JSON.stringify(IniRun);
-                ws.send(IniRun);*/
+                $('#calcular').prop('disabled', false);
             };
 
             // when the connection is closed, this method is called
             ws.onclose = function () {
-                inc.innerHTML += '.. connection closed<br/>';
+                //inc.innerHTML += '.. connection closed<br/>';
+                $('#status').text('...La conexion se cerro')
             }
 
-            /*form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var val = input.value;
-                ws.send(val);
-                input.value = "";
-            });*/
-
-            $('#calcular').click(function () {
-                //$('#stop').show();
-                //$('#calcular').hide();                
+            $('#calcular').click(function () {                
+                $('#stop').show();
+                $('#calcular').hide();
+                $('#LabelCalculando').show();
                 var IniRun = {
-                    'SubEvento':TipoConexion,
+                    'SubEvento': TipoConexion,
                     'FEN': $('#sendedFEN').val(),
                     'Depth': $('#depth').val(),
                     'MultiPv': $('#multyPv').val()
@@ -65,6 +48,15 @@
                 console.log(IniRun)
                 ws.send(IniRun);
                 TipoConexion = 'SiguientesConexiones';
+                $('#variantes').empty()
+                var NumeVari = $('#multyPv').val();
+                var ExtraDiv = 55;
+                var TotalHeightDiv = ExtraDiv * NumeVari;
+                for (var i = 0; i < NumeVari; i++) {
+                    $('#variantes').append('<div id="variante"' + NumeVari + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;"></div>');
+                    $('#variantes').css('height', TotalHeightDiv + 'px');
+                }
+
             })
 
             $('#stop').click(function () {
@@ -78,20 +70,16 @@
                 };
                 IniRun = JSON.stringify(IniRun);
                 console.log(IniRun)
-                ws.send(IniRun);                
+                ws.send(IniRun);
             })
 
         });
     </script>
 </head>
 <body>
-    <form id="sendForm">
-        <input id="sendText" placeholder="Text to send" />
-    </form>
-    <pre id="incomming"></pre>
-    <div style="height:140px; width:820px; border:3px solid black;">
+    <div style="height:132px; width:700px; border:3px solid black;">
         <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Cadena FEN:</label>
-        <input id="sendedFEN" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -" style="margin-top:10px; margin-left:10px; float:left; width:800px; color:orangered; font-size:16px; font-weight:bold; font-family:'Comic Sans MS';" placeholder="Posicion FEN para enviar" maxlength="100" />
+        <input id="sendedFEN" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -" style="margin-top:10px; margin-left:10px; float:left; width:680px; color:orangered; font-size:16px; font-weight:bold; font-family:'Comic Sans MS';" placeholder="Posicion FEN para enviar" maxlength="100" />
         <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Profundidad:</label>
         <input id="depth" value="15" style="margin-top:10px; margin-left:10px; float:left; width:60px; color:orangered; font-size:16px; font-weight:bold; font-family:'Comic Sans MS';" maxlength="99" />
         <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">MultiPv:</label>
@@ -99,7 +87,15 @@
         <label style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Status: </label>
         <label id="status" style="margin-top:10px; margin-left:10px; float:left; color:orangered; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Esperando...</label>
     </div>
-    <button id="calcular" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
-    <button id="stop" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Stop</button>
+    <div style="height:56px; width:700px; border:3px solid black; margin-top:10px;">
+        <button id="calcular" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
+        <button id="stop" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Stop</button>
+        <label id="LabelCalculando" style="margin-top:18px; margin-left:18px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">...Calculando</label>
+    </div>
+    <div id="variantes"style="height:60px; width:700px; border:3px solid black; margin-top:10px;">
+        <div id="variante1" style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">
+            <label style="margin-top:4px; margin-left:4px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">Esperando...Info...</label>
+        </div>
+    </div>
 </body>
 </html>

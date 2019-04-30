@@ -72,6 +72,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="public\gestvariantes.js" />
     <Content Include="webserver.js" />
     <Content Include="public\client.html" />
   </ItemGroup>
