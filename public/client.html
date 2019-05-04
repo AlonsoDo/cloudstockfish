@@ -20,6 +20,22 @@
             // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
                 console.log(evt.data);
+
+                //if (TipoConexion == 'PrimeraConexion') {
+                    NumeVari = $('#multyPv').val();
+                    NumeVari = parseInt(NumeVari);
+                    var ExtraDiv = 55;
+                    var TotalHeightDiv = ExtraDiv * NumeVari;
+                    $('#variantes').empty();
+
+                    //Crear divs variantes
+                    for (var i = 1; i < NumeVari + 1; i++) {
+                        $('#variantes').append('<div id="variante"' + NumeVari.toString() + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">' +
+                            '<label id="variante' + NumeVari.toString() + '">Aki va la varante</label>' +
+                            '</div > ');
+                        $('#variantes').css('height', TotalHeightDiv + 'px');     
+                    } 
+                //}                     
             };
 
             // when the connection is established, this method is called
@@ -49,14 +65,13 @@
                 ws.send(IniRun);
                 TipoConexion = 'SiguientesConexiones';
                 $('#variantes').empty()
-                var NumeVari = $('#multyPv').val();
+                /*NumeVari = $('#multyPv').val();
                 var ExtraDiv = 55;
                 var TotalHeightDiv = ExtraDiv * NumeVari;
                 for (var i = 0; i < NumeVari; i++) {
                     $('#variantes').append('<div id="variante"' + NumeVari + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;"></div>');
                     $('#variantes').css('height', TotalHeightDiv + 'px');
-                }
-
+                }*/
             })
 
             $('#stop').click(function () {

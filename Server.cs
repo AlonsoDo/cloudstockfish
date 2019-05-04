@@ -20,6 +20,7 @@ namespace Fleck.Samples.ConsoleApp
         public static List<Fleck.IWebSocketConnection> allSockets = new List<Fleck.IWebSocketConnection>();
         public static int IdHilo;
         public static int Index;
+        Process[] procesos = Process.GetProcesses();
 
         static void Main()
         {
@@ -79,9 +80,7 @@ namespace Fleck.Samples.ConsoleApp
 
                             IdHilos.Add(t.ManagedThreadId);
 
-                            Thread.Sleep(2000);
-
-                            Console.WriteLine("hilo: " + t.ManagedThreadId);
+                            Thread.Sleep(2000);                            
 
                             IdHilo = t.ManagedThreadId;
 
