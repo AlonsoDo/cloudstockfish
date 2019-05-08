@@ -12,36 +12,36 @@ namespace Fleck.Samples.ConsoleApp
 {
     class Server
     {
-        //public List<string>ListaVariantes = new List<string>();        
         public StringBuilder Output = new StringBuilder();
-        //public static List<int> IdHilos = new List<int>();        
         public static IWebSocketConnection webSocket;
-        public static List<Fleck.IWebSocketConnection>allSockets = new List<Fleck.IWebSocketConnection>();
-        //public static int IdHilo;
-        //public static int Index;
-        //private Process[] procesos;
-
+        //public static List<Fleck.IWebSocketConnection>allSockets = new List<Fleck.IWebSocketConnection>();
+        
         static void Main()
         {
             FleckLog.Level = LogLevel.Debug;            
             var server = new WebSocketServer("ws://0.0.0.0:8181");
+            var allsockets = new List<IWebSocketConnection>();
 
             server.Start(socket =>
                 {
                     socket.OnOpen = () =>
                         {
                             Console.WriteLine("Open!");
+                            allsockets.Add(socket);
                         };
                     socket.OnClose = () =>
                         {
                             // Cerrar socket
                             Console.WriteLine("Close!");
+                            allsockets.Remove(socket);
                         };
                     socket.OnMessage = message =>
                         {
                             Console.WriteLine(message);
 
-                            /*Comunicacion oMessage = JsonConvert.DeserializeObject<Comunicacion>(message);
+                            allsockets.ToList().ForEach(s => s.Send(message));
+
+                            Comunicacion oMessage = JsonConvert.DeserializeObject<Comunicacion>(message);
 
                             // Creamos una instancia de la clase multi hilo y seteamos los campos que normalmente pasariamos como parametros
                             Comunicacion cmh = new Comunicacion();
@@ -61,72 +61,28 @@ namespace Fleck.Samples.ConsoleApp
                             // Iniciamos la ejecucion del nuevo hilo
                             t.Start();                            
 
-                            Thread.Sleep(2000);                         
+                            Thread.Sleep(100);                         
 
                             // Esperamos a que termine la ejecucion del hilo
-                            t.Join();*/
+                            t.Join();                            
 
-                            Console.WriteLine("Fin de la ejecución. Presione una tecla para salir.");
-                            Console.ReadLine();
+                            //Console.WriteLine("Fin de la ejecución. Presione una tecla para salir.");
+                            //Console.ReadLine();
                         };
                 });
 
                 string input = Console.ReadLine();
                 while (input != "exit")
                 {
-                    //sockets.ToList().ForEach(s => s.Send(input));
+                    allsockets.ToList().ForEach(s => s.Send(input));
                     input = Console.ReadLine();
                 }
-
-
-
-
-
-
-
-
-            /*
-            //allSockets.ToList().ForEach(s => s.Send("Echo: " + message));
-
-
-
-            
-
-                //cmh.process =
-
-                // Creamos un delegado para el método OutListText()                        
-                ThreadStart ts = new ThreadStart(cmh.OutListText);
-
-                // Creamos un hilo para ejecutar el delegado...
-                Thread t = new Thread(ts);                            
-
-                // Iniciamos la ejecucion del nuevo hilo
-                t.Start();                                  
-
+                
+                /*
                 IdHilos.Add(t.ManagedThreadId);
-
-                Thread.Sleep(2000);                            
-
                 IdHilo = t.ManagedThreadId;
-
                 Index = t.ManagedThreadId;
-
-                //cmh.process = t.ManagedThreadId;
-
-                Thread.Sleep(2000);                           
-
-                // Esperamos a que termine la ejecucion del hilo
-                t.Join();
-
-                Console.WriteLine("Fin de la ejecución. Presione una tecla para salir.");
-                Console.ReadLine();
-            //}                        
-            /*else if (oMessage.SubEvento == "SiguientesConexiones")
-            {
-                Console.WriteLine("SiguientesConexiones");
-            }*/
-            /*else if (oMessage.SubEvento == "StopCalc")
-            {
+                cmh.process = t.ManagedThreadId;            
                 foreach (Process proceso in Process.GetProcesses())
                 {
                     if (proceso.ProcessName == "stockfish_10_x64_win")
@@ -134,42 +90,26 @@ namespace Fleck.Samples.ConsoleApp
                         proceso.Kill();
                     }
                 }
-
-                Console.WriteLine("Stop");
-
-
-                Console.WriteLine("Stop...");
-                Thread.Sleep(40000);
-
-
-               /* Process[] process = Process.GetProcesses();
+                Process[] process = Process.GetProcesses();
 
                 foreach (Process prs in process)
                 {
-                    Console.WriteLine("Procesos corriendo " + prs.Id);
-                    Console.WriteLine("Procesos corriendo " + IdHilo);
+                    //Console.WriteLine("Procesos corriendo " + prs.Id);
+                    //Console.WriteLine("Procesos corriendo " + IdHilo);
 
                     if (prs.Id == IdHilo)
                     {
                         prs.Kill();
                         break;
                     }
-                }*/
-
+                }
             /*ProcessThreadCollection currentThreads = Process.GetCurrentProcess().Threads;
-
             foreach (ProcessThread thread in currentThreads)
             {
                 // Do whatever you need
                 Console.WriteLine("Procesos corriendo " + thread.Id);
             }
-
-            Console.WriteLine("Stop");*/
-            //}*/
-            //};
-            //});
-
-            /*var input = Console.ReadLine();
+            var input = Console.ReadLine();
             while (input != "exit")
             {
                 foreach (var socket in allSockets.ToList())
@@ -178,9 +118,7 @@ namespace Fleck.Samples.ConsoleApp
                 }
                 input = Console.ReadLine();
             }*/
-
-        }          
-
+        } 
     }    
 
     class Comunicacion
@@ -197,12 +135,10 @@ namespace Fleck.Samples.ConsoleApp
 
             Console.WriteLine("Recibiendo parametros...");
             
-            //Thread.Sleep(2000);       
+            //Thread.Sleep(100);       
 
             int Milisegundos = System.Convert.ToInt32(this.Segundos);
             Milisegundos = Milisegundos * 1000;
-
-
 
             Console.WriteLine("SubEvento: " + this.SubEvento + " FEN: " + this.FEN + " Segundos: " + this.Segundos + " MultiPv: " + this.MultiPv);
             
@@ -255,17 +191,14 @@ namespace Fleck.Samples.ConsoleApp
             //Console.WriteLine(Environment.NewLine + "Proceso parado");
             //process.Close();
 
-
             //Output.Append(Environment.NewLine + outLine.Data);
             //ListaVariantes.Add(Environment.NewLine + outLine.Data);
             //Console.WriteLine(Environment.NewLine + outLine.Data);
             //Console.WriteLine(ListaVariantes.Count);
 
-            /*if (ListaVariantes.Count == 250)
-            {
-                process.StandardInput.WriteLine("stop");
-                process.StandardInput.AutoFlush = true;
-                process.StandardInput.Close();*/
+            /*process.StandardInput.WriteLine("stop");
+            process.StandardInput.AutoFlush = true;
+            process.StandardInput.Close();*/
         }   
     }
 }

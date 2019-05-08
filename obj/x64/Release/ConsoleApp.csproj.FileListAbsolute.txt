@@ -1,0 +1,9 @@
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Release\Fleck.Samples.ConsoleApp.exe
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Release\Fleck.dll
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Release\Newtonsoft.Json.dll
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Release\Fleck.pdb
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Release\Newtonsoft.Json.pdb
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\bin\x64\Release\Newtonsoft.Json.xml
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Release\ConsoleApp.csproj.CoreCompileInputs.cache
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Release\ConsoleApp.csproj.CopyComplete
+C:\Temp\TestFleck\src\Samples\ConsoleApp1\obj\x64\Release\Fleck.Samples.ConsoleApp.exe
