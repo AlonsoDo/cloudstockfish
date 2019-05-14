@@ -15,8 +15,7 @@
             
             // when the connection is established, this method is called
             ws.onopen = function () {
-                $('#status').text('...Conexion abierta')
-               // $('#calcular').prop('disabled', true);
+                $('#status').text('...Conexion abierta');               
             };
 
             // when data is comming from the server, this metod is called
@@ -24,9 +23,16 @@
                 console.log(evt.data);
             }
 
-            $('#stop').click(function () {
-                ws.send('Test1');
-                ws.send('Test2');
+            $('#stop').click(function () {                
+                var IniRun = {
+                    'SubEvento': 'Reset',
+                    'FEN': $('#sendedFEN').val(),
+                    'Segundos': $('#segundos').val(),
+                    'MultiPv': $('#multyPv').val()
+                };
+                IniRun = JSON.stringify(IniRun);
+                console.log(IniRun);
+                ws.send(IniRun);
             });
 
             $('#calcular').click(function () {
