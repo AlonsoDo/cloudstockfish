@@ -8,6 +8,7 @@
 
         var wsImpl = window.WebSocket || window.MozWebSocket;
         window.ws = new wsImpl('ws://localhost:8181/');
+        var FlagInfo = false;
 
         $(document).ready(function () {
 
@@ -21,7 +22,38 @@
             // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
                 console.log(evt.data);
-                GestionVariantes(evt.data);
+
+                // Desglosar informacion
+                var result = evt.data; 
+                var aInfo = result.split(' ');
+
+                // Mostrar profundidad
+                var nDepth = aInfo.indexOf('depth');
+                if (nDepth > -1) {
+                    var cDepth = aInfo[nDepth + 1];
+                    $('#profundidad').text(cDepth);
+                }
+
+                if (FlagInfo == false) {
+                    FlagInfo = true;
+
+                    // Mostrar lineas multipv
+                    var NumeVari = $('#multyPv').val();
+                    NumeVari = parseInt(NumeVari);
+                    var ExtraDiv = 54;
+                    var TotalHeightDiv = ExtraDiv * NumeVari;
+                    $('#variantes').empty();
+
+                    //Crear divs variantes
+                    for (var i = 1; i < NumeVari + 1; i++) {
+                        $('#variantes').append('<div id="divvariante"' + NumeVari.toString() + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">' +
+                            '<label id="lbvariante' + i.toString() + '">Aki va la variante</label>' +
+                            '</div > ');
+                        $('#variantes').css('height', TotalHeightDiv + 'px');
+                    }
+                }
+
+                GestionVariantes(result);
             }
 
             // when the connection is closed, this method is called
@@ -43,6 +75,7 @@
 
             $('#calcular').click(function () {
 
+                FlagInfo = false;
                 var IniRun = {
                     'SubEvento': 'Calcular',
                     'FEN': $('#sendedFEN').val(),
