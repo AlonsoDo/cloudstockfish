@@ -21,6 +21,12 @@
             // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
                 console.log(evt.data);
+                GestionVariantes(evt.data);
+            }
+
+            // when the connection is closed, this method is called
+            ws.onclose = function () {                
+                $('#status').text('...La conexion se cerro');
             }
 
             $('#stop').click(function () {                
@@ -47,167 +53,7 @@
                 console.log(IniRun);
                 ws.send(IniRun);                
 
-            });
-
-            /*$('#LabelCalculando').hide();
-
-            // create a new websocket and connect
-            window.ws = new wsImpl('ws://localhost:8181/');
-
-            // when data is comming from the server, this metod is called
-            ws.onmessage = function (evt) {
-                console.log(evt.data);
-
-                //if (TipoConexion == 'PrimeraConexion') {
-                    NumeVari = $('#multyPv').val();
-                    NumeVari = parseInt(NumeVari);
-                    var ExtraDiv = 55;
-                    var TotalHeightDiv = ExtraDiv * NumeVari;
-                    $('#variantes').empty();
-
-                    //Crear divs variantes
-                    for (var i = 1; i < NumeVari + 1; i++) {
-                        $('#variantes').append('<div id="variante"' + NumeVari.toString() + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">' +
-                            '<label id="variante' + NumeVari.toString() + '">Aki va la varante</label>' +
-                            '</div > ');
-                        $('#variantes').css('height', TotalHeightDiv + 'px');     
-                    } 
-                //}                     
-            };
-
-            // when the connection is established, this method is called
-            ws.onopen = function () {
-                $('#status').text('...Conexion abierta')
-                $('#calcular').prop('disabled', false);
-            };
-
-            // when the connection is closed, this method is called
-            ws.onclose = function () {
-                //inc.innerHTML += '.. connection closed<br/>';
-                $('#status').text('...La conexion se cerro')
-            }*/
-
-            /*$('#calcular').click(function () {
-
-                alert('Crear socket')
-
-                var wsImpl = window.WebSocket || window.MozWebSocket;
-
-                //var wsImpl = window.WebSocket || window.MozWebSocket;
-                //var ContConexiones = 0;
-                var TipoConexion = 'PrimeraConexion';
-
-                //$('#LabelCalculando').hide();
-
-                // create a new websocket and connect
-                window.ws = new wsImpl('ws://localhost:8181/');
-
-                // when data is comming from the server, this metod is called
-                ws.onmessage = function (evt) {
-                    console.log(evt.data);
-
-                    //if (TipoConexion == 'PrimeraConexion') {
-                    NumeVari = $('#multyPv').val();
-                    NumeVari = parseInt(NumeVari);
-                    var ExtraDiv = 55;
-                    var TotalHeightDiv = ExtraDiv * NumeVari;
-                    $('#variantes').empty();
-
-                    //Crear divs variantes
-                    for (var i = 1; i < NumeVari + 1; i++) {
-                        $('#variantes').append('<div id="variante"' + NumeVari.toString() + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">' +
-                            '<label id="variante' + NumeVari.toString() + '">Aki va la varante</label>' +
-                            '</div > ');
-                        $('#variantes').css('height', TotalHeightDiv + 'px');
-                    }
-                    //}                     
-                };
-
-                // when the connection is established, this method is called
-                ws.onopen = function () {
-                    /*$('#status').text('...Conexion abierta')
-                    // $('#calcular').prop('disabled', false);
-
-                    var wsImpl2 = window.WebSocket || window.MozWebSocket;
-                    // create a new websocket and connect
-                    window.ws = new wsImpl2('ws://localhost:8181/');
-                    alert('Socket 2 creado')
-
-                    var IniRun = {
-                        'SubEvento': TipoConexion,
-                        'FEN': $('#sendedFEN').val(),
-                        'Depth': $('#depth').val(),
-                        'MultiPv': $('#multyPv').val()
-                    };
-                    IniRun = JSON.stringify(IniRun);
-                    console.log(IniRun)
-                    ws.send(IniRun);
-
-                    //TipoConexion = 'SiguientesConexiones';
-                    $('#variantes').empty()
-                    NumeVari = $('#multyPv').val();
-                    var ExtraDiv = 55;
-                    var TotalHeightDiv = ExtraDiv * NumeVari;
-                    for (var i = 0; i < NumeVari; i++) {
-                        $('#variantes').append('<div id="variante"' + NumeVari + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;"></div>');
-                        $('#variantes').css('height', TotalHeightDiv + 'px');
-                    }
-                };*/
-
-                // when the connection is closed, this method is called
-                /*ws.onclose = function () {
-                    //inc.innerHTML += '.. connection closed<br/>';
-                    $('#status').text('...La conexion se cerro')
-                }*/
-
-
-
-
-
-                /*$('#stop').show();
-                $('#calcular').hide();
-                //$('#LabelCalculando').show();
-                var IniRun = {
-                    'SubEvento': TipoConexion,
-                    'FEN': $('#sendedFEN').val(),
-                    'Depth': $('#depth').val(),
-                    'MultiPv': $('#multyPv').val()
-                };
-                IniRun = JSON.stringify(IniRun);
-                console.log(IniRun)
-                ws.send(IniRun);
-                //TipoConexion = 'SiguientesConexiones';
-                $('#variantes').empty()
-                NumeVari = $('#multyPv').val();
-                var ExtraDiv = 55;
-                var TotalHeightDiv = ExtraDiv * NumeVari;
-                for (var i = 0; i < NumeVari; i++) {
-                    $('#variantes').append('<div id="variante"' + NumeVari + ' style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;"></div>');
-                    $('#variantes').css('height', TotalHeightDiv + 'px');
-                }*/
-
-
-
-
-            /*});*/
-
-            /*$('#stop').click(function () {                
-                // Close the connection, if open.
-                if (ws.readyState === WebSocket.OPEN) {
-                    $('#stop').hide();
-                    $('#calcular').show();
-                    ws.close();
-                }
-                /*var IniRun = {
-                    'SubEvento': 'StopCalc',
-                    'FEN': '',
-                    'Depth': '',
-                    'MultiPv': ''
-                };
-                IniRun = JSON.stringify(IniRun);
-                console.log(IniRun)
-                ws.send(IniRun);*/
-            /*})*/
+            });            
 
         });
     </script>
@@ -227,6 +73,8 @@
         <button id="calcular" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
         <button id="stop" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Stop</button>
         <label id="LabelCalculando" style="margin-top:18px; margin-left:18px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'"></label>
+        <label style="margin-top:18px; margin-left:18px; float:left; color:deeppink; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">Profundidad:</label>
+        <label id="profundidad" style="margin-top:18px; margin-left:8px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">0</label>
     </div>
     <div id="variantes"style="height:60px; width:700px; border:3px solid black; margin-top:10px;">
         <div id="variante1" style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">
