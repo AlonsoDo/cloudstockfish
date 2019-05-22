@@ -12,16 +12,26 @@
 
         $(document).ready(function () {
 
+            // Some sets
+            //$('#stop').hide();
+            $('#LabelCalculando').hide();
+            $('#loader').hide();
+
             console.log('Crear socket');
             
             // when the connection is established, this method is called
             ws.onopen = function () {
-                $('#status').text('...Conexion abierta');               
+                $('#status').text('...Conexion pendiente');               
             };
 
             // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
                 console.log(evt.data);
+
+                if (evt.data == 'Conectado')
+                {
+                    $('#status').text('...Conexion abierta');
+                }
 
                 // Desglosar informacion
                 var result = evt.data; 
@@ -73,7 +83,32 @@
                 ws.send(IniRun);
             });
 
+            $('#conectar').click(function () {
+
+                // Change view
+                $('#conectar').hide();
+                $('#LabelCalculando').show();
+                $('#loader').show();
+
+                FlagInfo = false;
+                var IniRun = {
+                    'SubEvento': 'Conectar',
+                    'FEN': $('#sendedFEN').val(),
+                    'Segundos': $('#segundos').val(),
+                    'MultiPv': $('#multyPv').val()
+                };
+                IniRun = JSON.stringify(IniRun);
+                console.log(IniRun);
+                ws.send(IniRun);                
+
+            });
+
             $('#calcular').click(function () {
+
+                // Change view
+                $('#conectar').hide();
+                $('#LabelCalculando').show();
+                $('#loader').show();
 
                 FlagInfo = false;
                 var IniRun = {
@@ -84,9 +119,9 @@
                 };
                 IniRun = JSON.stringify(IniRun);
                 console.log(IniRun);
-                ws.send(IniRun);                
+                ws.send(IniRun);
 
-            });            
+            });
 
         });
     </script>
@@ -103,11 +138,13 @@
         <label id="status" style="margin-top:10px; margin-left:10px; float:left; color:orangered; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'"></label>
     </div>
     <div style="height:56px; width:700px; border:3px solid black; margin-top:10px;">
+        <button id="conectar" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Conectar</button>
         <button id="calcular" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Calcular</button>
         <button id="stop" type="button" style="margin-top:10px; margin-left:10px; float:left; color:deeppink; font-size:20px; font-weight:bold; font-family:'Comic Sans MS'">Stop</button>
-        <label id="LabelCalculando" style="margin-top:18px; margin-left:18px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'"></label>
+        <label id="LabelCalculando" style="margin-top:18px; margin-left:18px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">Calculando...</label>
         <label style="margin-top:18px; margin-left:18px; float:left; color:deeppink; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">Profundidad:</label>
         <label id="profundidad" style="margin-top:18px; margin-left:8px; float:left; color:orangered; font-size:18px; font-weight:bold; font-family:'Comic Sans MS'">0</label>
+        <img id="loader" src="img/loader.gif" style="margin-top:14px; margin-left:10px; float:left;">
     </div>
     <div id="variantes"style="height:60px; width:700px; border:3px solid black; margin-top:10px;">
         <div id="variante1" style="height:40px; width:680px; border:2px solid black; margin-top:8px; margin-left:8px;">

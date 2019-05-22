@@ -12,13 +12,14 @@ namespace Fleck.Samples.ConsoleApp
 {
     class Server
     {
-        public static Comunicacion cmh = new Comunicacion();
+        public static Comunicacion cmh = new Comunicacion();        
 
         static void Main()
         {
             FleckLog.Level = LogLevel.Debug;
             var allSockets = new List<IWebSocketConnection>();
-            var server = new WebSocketServer("ws://0.0.0.0:8181");
+            var server = new WebSocketServer("ws://0.0.0.0:8181");            
+
             server.Start(socket =>
             {
                 socket.OnOpen = () =>
@@ -44,15 +45,47 @@ namespace Fleck.Samples.ConsoleApp
                     cmh.MultiPv = oMessage.MultiPv;
                     cmh.webSocket = socket;                    
 
+                    int Milisegundos = System.Convert.ToInt32(oMessage.Segundos);
+                    Milisegundos = Milisegundos * 1000;
+
                     if (oMessage.SubEvento == "Calcular")
+                    {
+                        cmh.process.StandardInput.WriteLine("setoption name multipv value " + oMessage.MultiPv);
+                        cmh.process.StandardInput.Flush();
+
+                        cmh.process.StandardInput.WriteLine("position fen " + oMessage.FEN);
+                        cmh.process.StandardInput.Flush();
+                        
+                        cmh.process.StandardInput.WriteLine("go movetime " + Milisegundos.ToString());
+                        cmh.process.StandardInput.Flush();
+
+                    }
+
+                    if (oMessage.SubEvento == "Reset")
+                    {
+                        cmh.process.StandardInput.WriteLine("stop");
+                        cmh.process.StandardInput.Flush();
+
+                        //cmh.process.StandardInput.WriteLine("go movetime 15000");
+                        //cmh.process.StandardInput.Flush();
+                    }
+
+                    if (oMessage.SubEvento == "Conectar")
                     {
                         // Creamos un delegado para el método OutListText()                        
                         ThreadStart ts = new ThreadStart(cmh.OutListText);
 
-                        // Cre=amos un hilo para ejecutar el delegado...
+                        // Creamos un hilo para ejecutar el delegado...
                         Thread t = new Thread(ts);                        
 
                         t.Start();                        
+
+                        Thread.Sleep(2000);
+
+                        cmh.webSocket.Send("Conectado");
+
+                        //cmh.process.StandardInput.WriteLine("stop");
+                        //cmh.process.StandardInput.Flush();
                     }
                 }; // End OnMessage
 
@@ -79,6 +112,8 @@ namespace Fleck.Samples.ConsoleApp
         public string MultiPv;
         public IWebSocketConnection webSocket;
 
+        public Process process = new Process();        
+
         public void OutListText()
         {
             Console.WriteLine("Recibiendo parametros...");
@@ -87,7 +122,7 @@ namespace Fleck.Samples.ConsoleApp
             int Milisegundos = System.Convert.ToInt32(this.Segundos);
             Milisegundos = Milisegundos * 1000;
 
-            Process process = new Process();
+            //Process process = new Process();
 
             process.StartInfo.FileName = "stockfish_10_x64_win.exe";
             process.StartInfo.UseShellExecute = false;
@@ -97,6 +132,10 @@ namespace Fleck.Samples.ConsoleApp
             process.OutputDataReceived += OutputHandler;
 
             process.Start();
+
+            //process.OutputDataReceived += OutputHandler;
+
+            Thread.Sleep(2000);
 
             process.StandardInput.WriteLine("uci");
             process.StandardInput.Flush();
@@ -111,7 +150,9 @@ namespace Fleck.Samples.ConsoleApp
             process.StandardInput.Flush();
 
             process.StandardInput.WriteLine("go movetime " + Milisegundos.ToString());
-            process.StandardInput.Flush();            
+            process.StandardInput.Flush();
+
+            Thread.Sleep(2000);
 
             process.BeginOutputReadLine();
 
